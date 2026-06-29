@@ -109,21 +109,39 @@ st.set_page_config(page_title="IA Rap Judge - Audio Edition", page_icon="🎤", 
 st.title("🎤 IA Rap Judge (Batalla de 4 Concursantes)")
 st.subheader("Graba a cada participante en una tarjeta y deja que el juez evalúe la batalla")
 
-NUM_CONCURSANTES = 4
-
-if "concursantes" not in st.session_state:
-    st.session_state.concursantes = {
-        i: {
-            "nombre": f"Concursante {i + 1}",
-            "audio": None,
-            "letra": "",
-            "resultado": None,
-        }
-        for i in range(NUM_CONCURSANTES)
-    }
-
 # Barra lateral
 st.sidebar.header("🔑 Configuración")
+num_concursantes = st.sidebar.number_input(
+    "Número de concursantes",
+    min_value=1,
+    max_value=8,
+    value=st.session_state.get("num_concursantes", 4),
+    step=1,
+    key="num_concursantes_input",
+)
+num_concursantes = int(num_concursantes)
+st.session_state.num_concursantes = num_concursantes
+
+if "concursantes" not in st.session_state or len(st.session_state.concursantes) != num_concursantes:
+    concursantes_actualizados = {}
+    for i in range(num_concursantes):
+        if "concursantes" in st.session_state and i in st.session_state.concursantes:
+            anterior = st.session_state.concursantes[i]
+            concursantes_actualizados[i] = {
+                "nombre": anterior.get("nombre", f"Concursante {i + 1}"),
+                "audio": anterior.get("audio"),
+                "letra": anterior.get("letra", ""),
+                "resultado": anterior.get("resultado"),
+            }
+        else:
+            concursantes_actualizados[i] = {
+                "nombre": f"Concursante {i + 1}",
+                "audio": None,
+                "letra": "",
+                "resultado": None,
+            }
+    st.session_state.concursantes = concursantes_actualizados
+
 api_key_input = st.sidebar.text_input(
     "API Key",
     value='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',
@@ -135,34 +153,7 @@ st.sidebar.markdown("[Consigue tu llave gratis aquí](https://groq.com)")
 st.markdown("### 🎙️ Panel de grabación")
 
 cols = st.columns(2)
-for idx, col in enumerate(cols):
-    with col:
-        st.markdown(f"### {idx + 1}. Concursante")
-        nombre = st.text_input(
-            "Nombre",
-            value=st.session_state.concursantes[idx]["nombre"],
-            key=f"nombre_{idx}",
-        )
-        st.session_state.concursantes[idx]["nombre"] = nombre
-
-        audio_rec = mic_recorder(
-            start_prompt="🔴 Grabar",
-            stop_prompt="⏹️ Guardar audio",
-            just_once=False,
-            key=f"recorder_{idx}",
-        )
-
-        if audio_rec:
-            st.session_state.concursantes[idx]["audio"] = audio_rec["bytes"]
-
-        if st.session_state.concursantes[idx]["audio"] is not None:
-            st.success("Audio listo para evaluar")
-        else:
-            st.caption("Aún no hay audio grabado")
-
-        st.markdown("---")
-
-for idx in range(2, NUM_CONCURSANTES):
+for idx in range(st.session_state.num_concursantes):
     col = cols[idx % 2]
     with col:
         st.markdown(f"### {idx + 1}. Concursante")
@@ -223,28 +214,7 @@ st.markdown("---")
 st.markdown("### 📊 Resultados")
 
 result_cols = st.columns(2)
-for idx, col in enumerate(result_cols):
-    with col:
-        concursante = st.session_state.concursantes[idx]
-        st.markdown(f"### {concursante['nombre']}")
-
-        if concursante["resultado"]:
-            r = concursante["resultado"]
-            st.metric(label="🏆 Puntuación", value=f"{r.puntuacion_total} / 10")
-            st.markdown("**Punchline detectado**")
-            st.info(f'"{r.punchline_destacado}"')
-            st.markdown("**Análisis técnico**")
-            st.write(r.analisis_tecnico)
-            st.markdown("**Veredicto del juez**")
-            st.warning(r.veredicto_callejero)
-
-            if st.button(f"🔊 Repetir veredicto - {concursante['nombre']}", key=f"repetir_{idx}"):
-                texto_discurso = f"Tu puntuación es de {r.puntuacion_total}. {r.veredicto_callejero}"
-                hablar_veredicto(texto_discurso)
-        else:
-            st.info("Aún no hay veredicto para este concursante")
-
-for idx in range(2, NUM_CONCURSANTES):
+for idx in range(st.session_state.num_concursantes):
     col = result_cols[idx % 2]
     with col:
         concursante = st.session_state.concursantes[idx]
