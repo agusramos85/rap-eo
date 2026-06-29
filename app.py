@@ -125,10 +125,10 @@ if "concursantes" not in st.session_state:
 # Barra lateral
 st.sidebar.header("🔑 Configuración")
 api_key_input = st.sidebar.text_input(
-    "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",
+    "API Key",
+    value="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",
     type="password",
-    
-    key="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"
+    key="groq_api_key",
 )
 st.sidebar.markdown("[Consigue tu llave gratis aquí](https://groq.com)")
 
