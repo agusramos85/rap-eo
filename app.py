@@ -10,6 +10,25 @@ from streamlit_mic_recorder import mic_recorder
 # Configuración de la página web
 st.set_page_config(page_title="IA Rap Judge - Audio Edition", page_icon="🎤", layout="wide")
 
+if "autenticado" not in st.session_state:
+    st.session_state.autenticado = False
+
+if not st.session_state.autenticado:
+    st.title("🔐 Acceso requerido")
+    with st.form("login_form"):
+        usuario = st.text_input("Usuario")
+        password = st.text_input("Contraseña", type="password")
+        enviado = st.form_submit_button("Entrar")
+
+        if enviado:
+            if usuario == "admin" and password == "rapReich":
+                st.session_state.autenticado = True
+                st.success("Acceso concedido")
+                st.rerun()
+            else:
+                st.error("Usuario o contraseña incorrectos")
+    st.stop()
+
 # --- FUNCIÓN PARA GENERAR UN WAV BASE VÁLIDO SI NO EXISTE ---
 def inicializar_archivo_wav(nombre_archivo="mi_freestyle.wav"):
     if not os.path.exists(nombre_archivo):
