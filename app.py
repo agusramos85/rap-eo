@@ -125,7 +125,7 @@ if "concursantes" not in st.session_state:
 # Barra lateral
 st.sidebar.header("🔑 Configuración")
 api_key_input = st.sidebar.text_input(
-    "Introduce tu Groq API Key:",
+    "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",
     type="password",
     key="groq_api_key",
 )
