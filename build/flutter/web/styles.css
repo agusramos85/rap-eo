@@ -1,0 +1,150 @@
+:root {
+  --fill-color: #010101;
+  --border-color: #cc9322;
+  --font-color: #f0ead6;
+  --surface-color: #0c0c0c;
+}
+
+html, body {
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  background: var(--fill-color);
+  color: var(--font-color);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+body {
+  background-color: var(--fill-color);
+  color: var(--font-color);
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  color: inherit;
+  box-sizing: border-box;
+}
+
+button,
+input,
+select,
+textarea,
+.button,
+.card,
+.container,
+.flet-button,
+.flet-card {
+  background-color: var(--fill-color) !important;
+  color: var(--font-color) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+.container,
+.card,
+.flet-card,
+.flet-container {
+  background: rgba(1, 1, 1, 0.92);
+  border-color: var(--border-color);
+  box-shadow: 0 0 24px rgba(204, 147, 34, 0.18);
+}
+
+a,
+a:visited,
+a:hover,
+a:active {
+  color: var(--font-color);
+}
+
+hr {
+  border-color: var(--border-color);
+}
+
+input:focus,
+textarea:focus,
+select:focus,
+button:focus {
+  outline: 2px solid rgba(204, 147, 34, 0.75);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: rgba(204, 147, 34, 0.35);
+  color: var(--font-color);
+}
+
+/* Apply branding colors to common DOM sections */
+header,
+footer,
+main,
+section,
+article,
+nav,
+aside,
+form,
+fieldset,
+legend,
+div,
+span,
+p {
+  color: var(--font-color);
+}
+
+header,
+footer,
+main,
+section,
+article,
+nav,
+aside,
+form,
+fieldset,
+legend,
+.card,
+.container,
+.brand-surface {
+  background-color: rgba(1, 1, 1, 0.92);
+  border: 1px solid var(--border-color);
+}
+
+button,
+a.button,
+.btn,
+.btn-primary,
+.btn-secondary,
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+label,
+.flet-button,
+.flet-control {
+  background-color: var(--fill-color) !important;
+  color: var(--font-color) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+button:hover,
+a:hover,
+.btn:hover,
+.flet-button:hover,
+.flet-control:hover {
+  border-color: #f0ead6;
+}
+
+.brand-fill {
+  background-color: var(--fill-color) !important;
+  color: var(--font-color) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+.brand-border {
+  border: 1px solid var(--border-color) !important;
+}
+
+.brand-text {
+  color: var(--font-color) !important;
+}
+
+.brand-surface {
+  background-color: var(--surface-color) !important;
+  color: var(--font-color) !important;
+}

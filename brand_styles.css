@@ -1,0 +1,166 @@
+:root {
+  --fill: #010101;
+  --border: #cc9322;
+  --text: #f0ead6;
+}
+
+html,
+body,
+.stApp,
+.stAppViewContainer,
+.main,
+.block-container,
+section,
+article,
+nav,
+header,
+footer,
+form,
+fieldset,
+legend,
+label,
+p,
+span,
+strong,
+em,
+b,
+li,
+ul,
+ol,
+dt,
+dd,
+summary,
+figcaption,
+blockquote,
+input,
+textarea,
+select,
+button {
+  background-color: var(--fill) !important;
+  color: var(--text) !important;
+  border-color: var(--border) !important;
+}
+
+body {
+  background-color: var(--fill) !important;
+  color: var(--text) !important;
+}
+
+* {
+  color: inherit !important;
+}
+
+[data-testid="stSidebar"] > div:first-child,
+.css-1d391kg,
+.css-18ni7ap,
+.stSidebar,
+.stSidebar>div {
+  background-color: var(--fill) !important;
+  color: var(--text) !important;
+}
+
+button,
+.stButton>button,
+.stDownloadButton>button,
+button.stButton,
+button[data-testid="stFormSubmitButton"],
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+button[data-baseweb="button"] {
+  background-color: var(--fill) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: none !important;
+}
+
+button:hover,
+.stButton>button:hover,
+.stDownloadButton>button:hover,
+button[data-testid="stFormSubmitButton"]:hover,
+button[data-baseweb="button"]:hover {
+  background-color: var(--fill) !important;
+  color: var(--border) !important;
+}
+
+input,
+textarea,
+select,
+.stTextInput>div>div>input,
+.stTextArea>div>div>textarea,
+.stNumberInput>div>div>input,
+.stSelectbox>div>div>div>div>div,
+.stMultiSelect>div>div>div>div,
+.stCheckbox>div>label,
+.stRadio>div>label,
+input[type="search"] {
+  background-color: var(--fill) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text) !important;
+}
+
+.stAlert,
+.stInfo,
+.stWarning,
+.stError,
+.css-1vq4p4l,
+.css-1kyxreq,
+.css-1ad7820,
+.css-1d391kg,
+.css-1u1io4t {
+  background-color: var(--fill) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+}
+
+.brand-card {
+  background-color: var(--fill) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 18px !important;
+  padding: 1rem !important;
+  margin-bottom: 1.25rem !important;
+  box-shadow: 0 0 24px var(--border) !important;
+}
+
+.brand-card h1,
+.brand-card h2,
+.brand-card h3,
+.brand-card h4,
+.brand-card p,
+.brand-card label,
+.brand-card strong,
+.brand-card span {
+  color: var(--text) !important;
+}
+
+a,
+a:visited {
+  color: var(--text) !important;
+}
+
+a:hover,
+a:active,
+button:hover,
+button:focus {
+  color: var(--border) !important;
+}
+
+hr,
+fieldset,
+legend,
+input,
+textarea,
+select,
+button {
+  border-color: var(--border) !important;
+}
+
+::selection {
+  background: var(--border) !important;
+  color: var(--fill) !important;
+}

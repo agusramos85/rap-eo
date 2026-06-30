@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 
 # 1. Definimos la estructura del veredicto
 class VeredictoRap(BaseModel):
-    puntuacion_total: float = Field(description="Calificación general de 1 a 10")
+    puntuacion_total: float = Field(description="Calificación general de 1 a 4")
     analisis_tecnico: str = Field(description="Crítica detallada de rimas y métricas")
     punchline_destacado: str = Field(description="La mejor frase encontrada")
     veredicto_callejero: str = Field(description="Frase con actitud de juez de rap dictando el resultado")
@@ -16,13 +16,13 @@ client = Groq(api_key=os.environ.get("gsk_iJj7rCOK1U1BgLC5OWOBWGdyb3FYBDzIKGM762
 
 def juez_de_rap_gratis(letra: str):
     prompt_sistema = (
-        "Actúas como un juez profesional de batallas de rap (como en Red Bull o FMS). "
+        "Actúas como un juez profesional de batallas de rap (como en Red Bull o FMS de Argentina). "
         "Debes responder ÚNICAMENTE con un objeto JSON válido que cumpla estrictamente con este esquema:\n"
         "{\n"
-        "  \"puntuacion_total\": número de 1 a 10,\n"
-        "  \"analisis_tecnico\": \"texto analizando rimas\",\n"
+        "  \"puntuacion_total\": número de 1 a 4,\n"
+        "  \"analisis_tecnico\": \"texto analizando rimas, metrica, flow, patrones y estructura\",\n"
         "  \"punchline_destacado\": \"la mejor frase\",\n"
-        "  \"veredicto_callejero\": \"frase con jerga y actitud de juez de rap\"\n"
+        "  \"veredicto_callejero\": \"Frase limpia y concreta del resultado de la vuelta\"\n"
         "}\n"
         "No agregues texto antes ni después del JSON."
     )
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     
     try:
         resultado = juez_de_rap_gratis(mis_barras)
-        print(f"🏅 Puntuación: {resultado.puntuacion_total}/10")
+        print(f"🏅 Puntuación: {resultado.puntuacion_total}/4")
         print(f"🔥 Punchline: '{resultado.punchline_destacado}'")
         print(f"📝 Análisis: {resultado.analisis_tecnico}")
         print(f"🎤 Veredicto: {resultado.veredicto_callejero}")
