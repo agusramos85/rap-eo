@@ -7,16 +7,49 @@ from pydantic import BaseModel, Field
 import streamlit.components.v1 as components
 from streamlit_mic_recorder import mic_recorder
 
-# Configuración de la página web
-st.set_page_config(page_title="IA Rap Judge - Audio Edition", page_icon="🎤", layout="wide")
+try:
+    from PIL import Image
+except ImportError:
+    Image = None
 
-brand_css_path = os.path.join(os.path.dirname(__file__), "brand_styles.css")
+project_dir = os.path.dirname(__file__)
+root_logo_path = os.path.join(project_dir, "logo.png")
+build_logo_path = os.path.join(project_dir, "build", "flutter", "images", "logo.png")
+logo_path = root_logo_path if os.path.exists(root_logo_path) else build_logo_path
+favicon_path = os.path.join(project_dir, "favicon.png")
+
+
+def generate_favicon(source_path, target_path):
+    if Image is None:
+        return False
+    try:
+        img = Image.open(source_path).convert("RGBA")
+        img.thumbnail((64, 64), Image.LANCZOS)
+        favicon = Image.new("RGBA", (64, 64), (0, 0, 0, 0))
+        favicon.paste(img, ((64 - img.width) // 2, (64 - img.height) // 2), img)
+        favicon.save(target_path, format="PNG")
+        return True
+    except Exception:
+        return False
+
+if os.path.exists(logo_path) and not os.path.exists(favicon_path):
+    generate_favicon(logo_path, favicon_path)
+
+page_icon_path = favicon_path if os.path.exists(favicon_path) else (logo_path if os.path.exists(logo_path) else "🎤")
+
+# Configuración de la página
+st.set_page_config(page_title="JUECES Y VERDUGOS DE TU RRUMBO", page_icon=page_icon_path)
+
+if os.path.exists(logo_path):
+    st.image(logo_path, width=180)
+
+brand_css_path = os.path.join(project_dir, "brand_styles.css")
 if os.path.exists(brand_css_path):
     with open(brand_css_path, "r", encoding="utf-8") as f:
         brand_css = f.read()
     st.markdown(f"<style>{brand_css}</style>", unsafe_allow_html=True)
 else:
-    st.warning("No se encontró brand_styles.css; el estilo de marca no se aplicará.")
+    st.warning("una autoopsia a tu style")
 
 if "autenticado" not in st.session_state:
     st.session_state.autenticado = False
@@ -132,12 +165,11 @@ def procesar_batalla_audio(audio_bytes, api_key: str):
 
 
 # --- INTERFAZ GRÁFICA ---
-st.set_page_config(page_title="IA Rap Judge - Audio Edition", page_icon="🎤", layout="wide")
-st.title("🎤 IA Rap Judge (Batalla de 4 Concursantes)")
-st.subheader("Graba a cada participante en una tarjeta y deja que el juez evalúe la batalla")
+st.title("OMERTA AI. - JURADO")
+st.subheader("El juez está listo para escuchar tu freestyle")
 
 # Barra lateral
-st.sidebar.header("🔑 Configuración")
+st.sidebar.header("🔑 OMERTA IA 7")
 num_concursantes = st.sidebar.number_input(
     "Número de concursantes",
     min_value=1,
@@ -154,16 +186,20 @@ if "concursantes" not in st.session_state or len(st.session_state.concursantes) 
     for i in range(num_concursantes):
         if "concursantes" in st.session_state and i in st.session_state.concursantes:
             anterior = st.session_state.concursantes[i]
+            audios_existentes = anterior.get("audios")
+            if audios_existentes is None:
+                audios_existentes = [anterior.get("audio")] + [None] * 3
+            audios_existentes = list(audios_existentes)[:4] + [None] * max(0, 4 - len(audios_existentes))
             concursantes_actualizados[i] = {
                 "nombre": anterior.get("nombre", f"Concursante {i + 1}"),
-                "audio": anterior.get("audio"),
+                "audios": audios_existentes,
                 "letra": anterior.get("letra", ""),
                 "resultado": anterior.get("resultado"),
             }
         else:
             concursantes_actualizados[i] = {
                 "nombre": f"Concursante {i + 1}",
-                "audio": None,
+                "audios": [None, None, None, None],
                 "letra": "",
                 "resultado": None,
             }
@@ -192,20 +228,24 @@ for idx in range(st.session_state.num_concursantes):
         )
         st.session_state.concursantes[idx]["nombre"] = nombre
 
-        audio_rec = mic_recorder(
-            start_prompt="🔴 Grabar",
-            stop_prompt="⏹️ Guardar audio",
-            just_once=False,
-            key=f"recorder_{idx}",
-        )
+        audios_list = st.session_state.concursantes[idx].get("audios", [None, None, None, None])
+        for rec_slot in range(4):
+            audio_rec = mic_recorder(
+                start_prompt=f"🔴 Grabar {rec_slot + 1}",
+                stop_prompt="⏹️ Guardar grabación",
+                just_once=False,
+                key=f"recorder_{idx}_{rec_slot}",
+            )
+            if audio_rec:
+                audios_list[rec_slot] = audio_rec["bytes"]
 
-        if audio_rec:
-            st.session_state.concursantes[idx]["audio"] = audio_rec["bytes"]
+        st.session_state.concursantes[idx]["audios"] = audios_list
 
-        if st.session_state.concursantes[idx]["audio"] is not None:
-            st.success("Audio listo para evaluar")
+        num_audios = sum(1 for a in audios_list if a is not None)
+        if num_audios > 0:
+            st.success(f"Grabaciones listas: {num_audios} / 4")
         else:
-            st.caption("Aún no hay audio grabado")
+            st.caption("Aún no hay grabaciones")
 
         st.markdown("---")
         st.markdown('</div>', unsafe_allow_html=True)
@@ -216,7 +256,7 @@ if st.button("🔥 Lanzar veredicto de los 4 concursantes", use_container_width=
     else:
         hay_audio = False
         for idx, concursante in st.session_state.concursantes.items():
-            if concursante["audio"] is not None:
+            if any(a is not None for a in concursante.get("audios", [])):
                 hay_audio = True
                 break
 
@@ -225,16 +265,16 @@ if st.button("🔥 Lanzar veredicto de los 4 concursantes", use_container_width=
         else:
             with st.spinner("Escuchando a los cuatro participantes y preparando la crítica... 🧠"):
                 for idx, concursante in st.session_state.concursantes.items():
-                    if concursante["audio"] is None:
+                    audios = concursante.get("audios", [])
+                    participante_audio = next((a for a in audios if a is not None), None)
+                    if participante_audio is None:
                         continue
 
                     try:
-                        letra, resultado = procesar_batalla_audio(concursante["audio"], api_key_input)
+                        letra, resultado = procesar_batalla_audio(participante_audio, api_key_input)
                         st.session_state.concursantes[idx]["letra"] = letra
                         st.session_state.concursantes[idx]["resultado"] = resultado
                     except Exception as e:
-                        st.session_state.concursantes[idx]["letra"] = ""
-                        st.session_state.concursantes[idx]["resultado"] = None
                         st.error(f"Error al analizar a {concursante['nombre']}: {e}")
 
             st.success("¡Análisis completado para todos los concursantes!")
